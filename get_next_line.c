@@ -5,51 +5,128 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: iouajjou <iouajjou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/08 10:19:57 by iouajjou          #+#    #+#             */
-/*   Updated: 2023/11/10 16:07:26 by iouajjou         ###   ########.fr       */
+/*   Created: 2023/11/11 16:01:21 by iouajjou          #+#    #+#             */
+/*   Updated: 2023/11/14 18:43:15 by iouajjou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 #include <stdio.h>
 
-char	*checkline(t_list *lst)
+int	checkline(char	*line)
 {
-	while (lst)
+	size_t	i;
+
+	if (!line)
+		return (0);
+	i = ft_strlen(line);
+	if (i > 0 && line[i - 1] == '\n')
+		return (1);
+	return (0);
+}
+
+char	*ft_strdup(const char *s)
+{
+	int		i;
+	char	*dup;
+
+	i = 0;
+	while (s[i])
+		i++;
+	dup = malloc(sizeof(char) * i + 1);
+	if (!dup)
+		return (NULL);
+	i = 0;
+	while (s[i])
 	{
-		if (lst->line)
-			return ()
-		lst = lst->next;
+		dup[i] = s[i];
+		i++;
 	}
+	dup[i] = 0;
+	return (dup);
 }
 
-char *get_next_line(int fd)
+char	*removeline(char *prev, char *line, char *buffer)
 {
-	static t_list	*lst;
-	char			buffer[BUFFER_SIZE];
-	size_t			i;
+	size_t	i;
+	char	*newprev;
 
-	trigger = 0;
-	while (!trigger)
+	i = 0;
+	free(buffer);
+	while (prev[i] && prev[i] == line[i])
+		i++;
+	newprev = ft_strdup(prev + i);
+	if (!newprev)
 	{
-		if (!list)
-		{
-			read(fd, buffer, BUFFER_SIZE);
-			addback_list(lst, newlist(buffer))
-		}
-		if ()
+		free(prev);
+		return (NULL);
 	}
-
+	free(prev);
+	if (newprev[0] == 0)
+	{
+		free(newprev);
+		return (NULL);
+	}
+	return (newprev);
 }
 
-#include <fcntl.h>
-#include <stdio.h>
-
-int main()
+char	*setline(char *line, char *prev, char *buffer)
 {
-	int fd = open("test", O_RDONLY);
-	printf("%s\n", get_next_line(fd));
-	printf("%s\n", get_next_line(fd));
-	printf("%s\n", get_next_line(fd));
-	close(fd);
+	char	*templine;
+
+	templine = ft_strjoin(prev, buffer);
+	if (line)
+		free(line);
+	if (!templine)
+		return (NULL);
+	return (templine);
 }
+
+char	*get_next_line(int fd)
+{
+	char		*line;
+	char		*buffer;
+	static char	*prevread = NULL;
+	int			r;
+
+	line = NULL;
+	buffer = malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	if (!buffer)
+		return (NULL);
+	r = 1;
+	while (!checkline(line) && r != 0)
+	{
+		r = read(fd, buffer, BUFFER_SIZE);
+		if (r == -1)
+			return (freeall(line, buffer, prevread));
+		buffer[r] = 0;
+		line = setline(line, prevread, buffer);
+		if (!line)
+			return (freeall(line, buffer, prevread));
+		prevread = ft_strjoin_prev(prevread, buffer);
+		if (!prevread)
+			return (freeall(line, buffer, prevread));
+	}
+	prevread = removeline(prevread, line, buffer);
+	return (line);
+}
+
+// #include <fcntl.h>
+// #include <stdio.h>
+
+// int main(void)
+// {
+// 	int	fd = open("test", O_RDONLY);
+// 	int i = 1;
+// 	char	*line;
+// 	printf("%d\n", BUFFER_SIZE);
+// 	line = get_next_line(fd);
+// 	while (line)
+// 	{
+// 		printf("Line %i : %s", i, line);
+// 		free(line);
+// 		line = get_next_line(fd);
+// 		i++;
+// 	}
+// 	close(fd);
+// }

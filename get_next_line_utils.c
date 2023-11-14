@@ -5,94 +5,138 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: iouajjou <iouajjou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/08 10:19:53 by iouajjou          #+#    #+#             */
-/*   Updated: 2023/11/10 16:01:53 by iouajjou         ###   ########.fr       */
+/*   Created: 2023/11/13 18:44:07 by iouajjou          #+#    #+#             */
+/*   Updated: 2023/11/14 18:39:32 by iouajjou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <stdio.h>
 
-t_list	*newlist(char *content)
+size_t	ft_strlens(const char *s1, const char *s2)
 {
-	t_list	*new;
-	char	*str;
-	int		i;
+	size_t	i;
+	size_t	j;
 
-	new = malloc(sizeof(t_list));
-	new->next = NULL;
-	new->line = 0;
 	i = 0;
-	str = malloc(sizeof(char) * len + 1);
-	while (str[i]);
+	if (!s1 && !s2)
+		return (0);
+	if (s1 == NULL)
+		return (ft_strlen(s2));
+	if (s2 == NULL)
+		return (ft_strlen(s1));
+	while (s1 && s1[i])
 	{
-		if (str[i] == '\n')
-		{
-			addback_list(new, newlist(buffer + i));
-			str[i] == "\\n";
-			new->line = 1;
-			i++;
-			break;
-		}
-		str[i] = content[i];
+		if (s1[i] == '\n')
+			return (i + 1);
 		i++;
 	}
-	str[i] = 0;
-	new->content = str;
-	return (new);
-}
-
-void	addback_list(t_list **lst, t_list *new)
-{
-	t_list	*temp;
-
-	temp = *lst;
-	if (!(*lst))
-		*lst = new;
-	else
+	j = 0;
+	while (s2[j])
 	{
-		while ((*lst)->next)
-			lst = &(*lst)->next;
-		(*lst)->next = new;
-		lst = &temp;
+		if (s2[j] == '\n')
+			return (i + j + 1);
+		j++;
 	}
+	return (i + j);
 }
 
-size_t lstsize(t_list *lst)
+char	*ft_strjoin(char *s1, char const *s2)
+{
+	char		*join;
+	size_t		i;
+	size_t		j;
+	size_t		len;
+
+	len = ft_strlens(s1, s2);
+	join = malloc(sizeof(char) * (len + 1));
+	if (!join)
+		return (NULL);
+	i = 0;
+	while (s1 && s1[i] && !(i > 0 && join[i - 1] == '\n') && i < len)
+	{
+		join[i] = s1[i];
+		i++;
+	}
+	j = 0;
+	while (s2 && s2[j] && !(j > 0 && join[i + j - 1] == '\n') && i + j < len)
+	{
+		join[i + j] = s2[j];
+		j++;
+	}
+	join[i + j] = 0;
+	return (join);
+}
+
+size_t	ft_strlen(const char *s)
 {
 	size_t	i;
 
 	i = 0;
-	while (lst)
-	{
-		i += lst->len;
-		lst = lst->next;
-	}
+	if (s == NULL)
+		return (0);
+	while (s[i])
+		i++;
 	return (i);
 }
 
-char	*list_to_str(t_list *lst)
+char	*ft_strjoin_prev(char *s1, char const *s2)
 {
-	char	*str;
+	char	*join;
 	int		i;
 	int		j;
-	size_t	len;
 
-	len = lstsize(lst);
-	str = malloc(sizeof(char) * (len + 1));
+	if ((ft_strlen(s1) + ft_strlen(s2)) == 0)
+		return (NULL);
+	join = malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1));
+	if (!join)
+		return (NULL);
 	i = 0;
-	while (lst && len)
+	while (s1 && s1[i])
 	{
-		j = 0;
-		while (lst->content[j] && len)
-		{
-			str[i] = lst->content[j];
-			j++;
-			i++;
-			len--;
-		}
-		lst = lst->next;
+		join[i] = s1[i];
+		i++;
 	}
-	str[i] = 0;
-	return (str);
+	j = 0;
+	while (s2 && s2[j])
+	{
+		join[i + j] = s2[j];
+		j++;
+	}
+	join[i + j] = 0;
+	if (s1)
+		free(s1);
+	return (join);
 }
 
+char	*freeall(char *line, char *buffer, char *prev)
+{
+	if (line)
+		free(line);
+	if (buffer)
+		free(buffer);
+	if (prev)
+		free(prev);
+	return (NULL);
+}
+
+// char	*setprev(char *prev, char buffer[])
+// {
+// 	size_t	i;
+// 	char	*newprev;
+
+// 	i = 0;
+// 	if (buffer[0])
+// 	{
+// 		while (buffer[i] && buffer[i] != '\n')
+// 			i++;
+// 		if (i == BUFFER_SIZE)
+// 			return (ft_strjoin_prev(prev, buffer));
+// 		return (ft_strjoin_prev(prev, buffer + i + 1));
+// 	}
+// 	while (prev[i] && prev[i] != '\n')
+// 		i++;
+// 	if (i == ft_strlen(prev))
+// 		return (prev);
+// 	return (prev + i + 1);
+// }

@@ -6,7 +6,7 @@
 /*   By: iouajjou <iouajjou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 10:20:01 by iouajjou          #+#    #+#             */
-/*   Updated: 2023/11/10 15:05:57 by iouajjou         ###   ########.fr       */
+/*   Updated: 2023/11/14 18:07:49 by iouajjou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,20 +16,22 @@
 # include <unistd.h>
 # include <stdlib.h>
 
-# define BUFFER_SIZE 42
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 42
+# endif
 
-typedef struct s_list
-{
-	char			*content;
-	size_t			len;
-	struct s_list	*next;
-}	t_list;
-
+//gnl_utils
+size_t	ft_strlens(const char *s1, const char *s2);
+char	*ft_strjoin(char *s1, char const *s2);
+size_t	ft_strlen(const char *s);
+char	*ft_strjoin_prev(char *s1, char const *s2);
+char	*freeall(char *line, char *buffer, char *prev);
+//char	*setprev(char *prev, char buffer[]);
+//gnl
+int		checkline(char	*line);
+char	*ft_strdup(const char *s);
+char	*removeline(char *prev, char *line, char *buffer);
+char	*setline(char *line, char *prev, char *buffer);
 char	*get_next_line(int fd);
-t_list	*newlist(char *content, size_t len);
-void	addback_list(t_list **lst, t_list *new);
-char	*list_to_str(t_list *lst);
-void	ft_lstdelone(t_list *lst);
-void	ft_lstclear(t_list **lst);
 
 #endif
